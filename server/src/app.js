@@ -6,6 +6,7 @@ import { env } from './config/env.js';
 import { errorHandler, notFound } from './middleware/error.js';
 import authRoutes from './routes/authRoutes.js';
 import expenseRoutes from './routes/expenseRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
 
 export function createApp() {
   const app = express();
@@ -29,6 +30,7 @@ export function createApp() {
 
   app.use('/api/auth', authRoutes);
   app.use('/api/expenses', expenseRoutes);
+  app.use('/api/categories', categoryRoutes);
 
   app.use(notFound);
   app.use(errorHandler);
