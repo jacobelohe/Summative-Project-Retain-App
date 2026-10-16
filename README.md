@@ -6,8 +6,8 @@ Retain is a full-stack web app for recording personal expenses, setting a monthl
 
 | | URL |
 | --- | --- |
-| **Frontend (Vercel)** | _TBD: add the deployed frontend URL here_ |
-| **API (Render)** | _TBD: add the deployed API URL here_ (health check: `/api/health`) |
+| **Frontend (Vercel)** | https://summative-project-retain-app-hazel.vercel.app |
+| **API (Render)** | https://retain-api-apcp.onrender.com (health check: `/api/health`) |
 
 **Demo accounts** (created by the seed script):
 

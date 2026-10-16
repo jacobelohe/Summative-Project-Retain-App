@@ -19,8 +19,8 @@ export function createApp() {
     cors({
       origin(origin, callback) {
         // Allow non-browser clients (curl, health checks) and configured frontends.
-        if (!origin || env.clientUrls.includes(origin)) return callback(null, true);
-        return callback(new Error(`Origin ${origin} is not allowed by CORS`));
+        // Unknown origins get no CORS headers, so the browser blocks the request.
+        callback(null, !origin || env.clientUrls.includes(origin));
       },
     }),
   );
