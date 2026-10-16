@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { env } from './config/env.js';
 import { errorHandler, notFound } from './middleware/error.js';
+import authRoutes from './routes/authRoutes.js';
 
 export function createApp() {
   const app = express();
@@ -24,6 +25,8 @@ export function createApp() {
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
+
+  app.use('/api/auth', authRoutes);
 
   app.use(notFound);
   app.use(errorHandler);
