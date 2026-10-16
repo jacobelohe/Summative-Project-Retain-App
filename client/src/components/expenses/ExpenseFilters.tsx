@@ -102,13 +102,13 @@ export function ExpenseFilters({ categories }: ExpenseFiltersProps) {
 
   return (
     <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
-      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: { xs: 'wrap', sm: 'nowrap' } }}>
         <TextField
           placeholder="Search by title or notes…"
           value={searchText}
           onChange={(e) => handleSearchChange(e.target.value)}
           size="small"
-          fullWidth
+          sx={{ flex: { xs: '1 1 100%', sm: '1 1 auto' } }}
           slotProps={{
             htmlInput: { 'aria-label': 'Search expenses' },
             input: {
@@ -133,7 +133,7 @@ export function ExpenseFilters({ categories }: ExpenseFiltersProps) {
           label="Sort by"
           value={`${filters.sortBy}:${filters.order}`}
           onChange={(e) => handleSortChange(e.target.value)}
-          sx={{ minWidth: { xs: 140, sm: 180 }, flexShrink: 0 }}
+          sx={{ flex: { xs: '1 1 auto', sm: '0 0 180px' } }}
         >
           {SORT_OPTIONS.map((o) => (
             <MenuItem key={o.value} value={o.value}>

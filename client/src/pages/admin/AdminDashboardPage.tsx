@@ -11,6 +11,7 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
+  Typography,
 } from '@mui/material'
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined'
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined'
@@ -107,11 +108,17 @@ export default function AdminDashboardPage() {
 
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <SectionCard title="Top 5 most-used">
+            <Typography variant="caption" color="text.secondary">
+              Ranked by number of expenses
+            </Typography>
             <CategoryRanking categories={insights.topCategories} maxCount={maxCount} />
           </SectionCard>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <SectionCard title="Bottom 5 least-used">
+            <Typography variant="caption" color="text.secondary">
+              Ranked by number of expenses
+            </Typography>
             <CategoryRanking categories={insights.bottomCategories} maxCount={maxCount} />
           </SectionCard>
         </Grid>

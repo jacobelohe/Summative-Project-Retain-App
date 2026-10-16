@@ -21,8 +21,13 @@ export function CategoryRanking({ categories, maxCount }: CategoryRankingProps) 
             <Typography variant="body2" sx={{ flexGrow: 1, minWidth: 0 }} noWrap>
               {c.name}
             </Typography>
-            <Typography variant="body2" className="num" sx={{ fontWeight: 600 }}>
-              {c.count} {c.count === 1 ? 'expense' : 'expenses'}
+            <Typography
+              variant="body2"
+              className="num"
+              sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}
+              title={`${c.count} ${c.count === 1 ? 'expense' : 'expenses'}`}
+            >
+              {c.count}
             </Typography>
           </Box>
           <LinearProgress

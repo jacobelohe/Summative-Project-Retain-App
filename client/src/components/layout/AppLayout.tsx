@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { Suspense, useState, type ReactNode } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
   AppBar,
@@ -29,6 +29,7 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import { useAuth } from '../../hooks/useAuth'
 import { useSignOut } from '../../hooks/useSignOut'
 import { BrandMark } from './BrandMark'
+import { LoadingState } from '../common/LoadingState'
 
 const DRAWER_WIDTH = 248
 
@@ -209,7 +210,10 @@ export function AppLayout() {
       <Box component="main" sx={{ flexGrow: 1, minWidth: 0, width: { md: `calc(100% - ${DRAWER_WIDTH}px)` } }}>
         <Toolbar />
         <Box sx={{ p: { xs: 2, sm: 3 }, maxWidth: 1280, mx: 'auto' }}>
-          <Outlet />
+          {/* Keep the shell visible while a lazily loaded page downloads. */}
+          <Suspense fallback={<LoadingState />}>
+            <Outlet />
+          </Suspense>
         </Box>
       </Box>
     </Box>
