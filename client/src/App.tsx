@@ -6,7 +6,8 @@ import { GuestRoute } from './routes/GuestRoute'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import NotFoundPage from './pages/NotFoundPage'
-import PlaceholderPage from './pages/PlaceholderPage'
+import AdminDashboardPage from './pages/admin/AdminDashboardPage'
+import AdminCategoriesPage from './pages/admin/AdminCategoriesPage'
 import DashboardPage from './pages/DashboardPage'
 import BudgetPage from './pages/BudgetPage'
 import ExpensesPage from './pages/expenses/ExpensesPage'
@@ -33,7 +34,8 @@ export default function App() {
           <Route path="/expenses/:id/edit" element={<EditExpensePage />} />
 
           <Route path="/admin" element={<AdminRoute />}>
-            <Route index element={<PlaceholderPage title="Platform insights" />} />
+            <Route index element={<AdminDashboardPage />} />
+            <Route path="categories" element={<AdminCategoriesPage />} />
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />
