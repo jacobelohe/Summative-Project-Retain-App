@@ -1,104 +1,97 @@
-# Retain — Personal Expense & Budget Manager
+# Retain
 
-Retain is a full-stack web app for recording personal expenses, setting a monthly budget and seeing where your money goes. Regular users manage their own expenses and budgets. Admins manage the shared expense categories and see platform-wide insights.
+Retain is a web application for recording personal expenses and tracking them against a monthly budget. It was built as a summative project using React with TypeScript on the frontend and a Node.js and Express REST API with a MongoDB database on the backend.
 
-## 🔗 Live demo
+Two kinds of accounts exist. A regular user records and reviews their own expenses and sets a budget for each month. An administrator manages the shared list of expense categories and can view statistics for the whole platform.
 
-| | URL |
+## Deployed application
+
+| Part | URL |
 | --- | --- |
-| **Frontend (Vercel)** | https://summative-project-retain-app-hazel.vercel.app |
-| **API (Render)** | https://retain-api-apcp.onrender.com (health check: `/api/health`) |
+| Frontend (Vercel) | https://summative-project-retain-app-hazel.vercel.app |
+| API (Render) | https://retain-api-apcp.onrender.com (health check at `/api/health`) |
 
-**Demo accounts** (created by the seed script):
+Demo account with sample data:
 
 | Role | Email | Password |
 | --- | --- | --- |
-| User (with sample data) | `demo@retain.app` | `Demo@12345` |
-| Admin | value of `ADMIN_EMAIL` (default `admin@retain.app`) | value of `ADMIN_PASSWORD` |
+| User | `demo@retain.app` | `Demo@12345` |
 
-> The API runs on Render's free tier, so the first request after a period of inactivity can take up to a minute while the server wakes up.
+The API runs on Render's free tier, which stops the service after a period of inactivity. The first request after that can take up to about a minute to respond.
 
----
+## Features
 
-## ✨ Features
+### Regular users
+- Sign up, sign in and sign out. The session is kept across page reloads.
+- Create, view, edit and delete expenses. Each expense has a title, an amount, a category, a date, a payment method and optional notes.
+- Search expenses by title or notes. Filter by category, payment method, date range and amount range. Sort by date or amount in either direction.
+- Server-side pagination of the expense list, with page sizes of 5, 10, 20 and 50.
+- Set, update or remove a budget for any month. For the selected month the app shows the total spent, the remaining amount and a status:
+  - within budget: less than 80% of the budget spent
+  - approaching the limit: 80% to 100% spent
+  - over budget: more than 100% spent
+- A dashboard for the selected month showing total spending, remaining budget, the highest single expense, the top category, spending by category in a chart, and the five most recently added expenses.
+- A layout that adapts to screen size: a sidebar on large screens, a slide-out menu on phones, and expense cards instead of a table on small screens.
 
-### For every user
-- **Authentication**: sign up, sign in and sign out with JWT-based sessions that persist across page reloads.
-- **Expense CRUD**: create, view, edit and delete expenses. Each expense has a title, amount, category, date, payment method and optional notes.
-- **Search, filter and sort**: search by title or notes; filter by category, payment method, date range and amount range; sort by date or amount (ascending or descending).
-- **Pagination**: the expense list is paginated on the server, with a choice of 5 / 10 / 20 / 50 per page.
-- **Monthly budget**: set, update or remove a budget for any month. The app shows total spent, remaining budget and a status:
-  - 🟢 **Within budget**: less than 80% used
-  - 🟠 **Approaching limit**: 80–100% used
-  - 🔴 **Over budget**: more than 100% used
-- **Dashboard**: for the selected month it shows total spending, remaining budget, highest single expense, top category, spending by category (donut chart) and the most recently added expenses.
-- **Responsive UI**: a sidebar on desktop and a slide-out drawer on mobile. Tables switch to cards on phones.
+### Administrators
+- Create, rename, recolour and delete expense categories. When a category is deleted, the expenses assigned to it are moved to a protected default category named "Uncategorized". The default category cannot be deleted.
+- A platform insights page showing the number of registered users, the number of expenses recorded, the total value of those expenses, the number of expenses recorded in the current month, total spending per category, the five most-used and five least-used categories, the most recently added expenses and the most recently registered users.
 
-### For admins
-- **Category management**: create, rename, recolour and delete categories. Deleting a category moves its expenses to the protected default category, **Uncategorized**, so no expense is ever left without a category. The confirm dialog says how many expenses will be moved.
-- **Platform insights**: total registered users, total expenses recorded, total value recorded, expenses recorded this month, spending per category (bar chart), top 5 most-used and bottom 5 least-used categories, recently added expenses and recently registered users.
+## Technologies
 
----
-
-## 🧱 Tech stack
-
-| Layer | Technology |
+| Area | Technology |
 | --- | --- |
-| Frontend | React 19, TypeScript, Vite, Material UI (MUI), React Router, Redux Toolkit, React Context, Axios, Recharts, Day.js |
+| Frontend | React 19, TypeScript, Vite, Material UI, React Router, Redux Toolkit, Axios, Recharts, Day.js |
 | Backend | Node.js, Express 5, Mongoose, JSON Web Tokens, bcryptjs, express-validator, Helmet, CORS |
 | Database | MongoDB (MongoDB Atlas in production) |
 | Hosting | Vercel (frontend), Render (API), MongoDB Atlas (database) |
 
----
-
-## 🏗️ Architecture
+## How the application is structured
 
 ```
 Summative-Project-Retain-App/
-├── client/                     React + TypeScript (Vite)
-│   └── src/
-│       ├── api/                Axios instance + typed API modules
-│       ├── components/         Reusable UI (common, layout, expenses, budget, charts, admin)
-│       ├── context/            AuthProvider (auth) and NotifyProvider (toasts)
-│       ├── hooks/              useAuth, useApi, useExpenses, useCategories, …
-│       ├── pages/              Route-level screens (lazy loaded)
-│       ├── routes/             ProtectedRoute, AdminRoute, GuestRoute
-│       ├── store/              Redux store + filters slice
-│       ├── types/              Shared TypeScript domain types
-│       └── utils/              Formatting helpers
-├── server/                     Express REST API
-│   ├── scripts/dev-memory.js   Runs the API on a throwaway in-memory MongoDB
-│   └── src/
-│       ├── config/             Env + database connection
-│       ├── controllers/        Request handlers
-│       ├── middleware/         authenticate, requireRole, validate, error handling
-│       ├── models/             User, Expense, Category, Budget
-│       ├── routes/             Route definitions + validation rules
-│       ├── services/           Budget calculations
-│       ├── utils/              Query builder, dates, tokens, ApiError
-│       └── seed.js             Seeds categories, admin and demo data
-└── render.yaml                 Render deployment blueprint
+  client/                     React and TypeScript frontend (Vite)
+    src/
+      api/                    Axios instance and one typed module per resource
+      components/             Reusable components (common, layout, expenses, budget, charts, admin)
+      context/                AuthProvider (authentication) and NotifyProvider (messages)
+      hooks/                  useAuth, useApi, useExpenses, useCategories and others
+      pages/                  One component per screen
+      routes/                 ProtectedRoute, AdminRoute, GuestRoute
+      store/                  Redux store and the filters slice
+      types/                  Shared TypeScript types
+      utils/                  Formatting helpers
+  server/                     Express API
+    scripts/dev-memory.js     Runs the API against a temporary in-memory MongoDB
+    src/
+      config/                 Environment variables and database connection
+      controllers/            Request handlers
+      middleware/             Authentication, role checks, validation, error handling
+      models/                 User, Expense, Category and Budget schemas
+      routes/                 Route definitions and validation rules
+      services/               Budget calculations
+      utils/                  Query builder, date helpers, token helpers
+      seed.js                 Creates categories, the admin account and demo data
+  render.yaml                 Render deployment configuration
 ```
 
 ### State management
-- **Authentication uses React Context only.** `AuthProvider` ([client/src/context/AuthProvider.tsx](client/src/context/AuthProvider.tsx)) holds the user, the token, `isAdmin` / `hasRole()`, and `login`, `register` and `logout`. `ProtectedRoute` and `AdminRoute` read this context to guard routes. A non-admin who opens an admin URL sees a 403 page.
-- **Expense searching, filtering, sorting and pagination use Redux only.** The `filters` slice ([client/src/store/filtersSlice.ts](client/src/store/filtersSlice.ts)) stores every control's value. A memoised selector turns that state into the API query, and `useExpenses` fetches again whenever the query changes. Filtering happens on the server, so results stay correct across pages.
+- Authentication uses React Context only. `AuthProvider` in `client/src/context/AuthProvider.tsx` stores the signed-in user and token and provides `login`, `register`, `logout`, `isAuthenticated` and `isAdmin`. `ProtectedRoute` redirects signed-out visitors to the login page. `AdminRoute` shows an "Admins only" page to signed-in users who are not administrators.
+- Searching, filtering, sorting and pagination use Redux only. The filters slice in `client/src/store/filtersSlice.ts` holds all of that state. A selector converts it into the query parameters sent to the API, and the `useExpenses` hook requests new data whenever the query changes. Filtering and sorting are carried out by the database, so results remain correct across pages.
 
-### Security
-- Passwords are hashed with bcrypt and never returned by the API.
-- Every expense and budget query is scoped to the signed-in user (`{ user: req.user._id }`). Requests for someone else's expense return `404`, so the API never reveals that the expense exists.
-- Admin endpoints are protected by `authenticate` + `requireRole('admin')`. Public sign-up always creates a regular `user`; admins are created only by the seed script.
-- Requests are validated with express-validator. Helmet sets security headers, and CORS only allows the configured frontend origin(s).
+### Access control
+- Passwords are hashed with bcrypt and are never returned by the API.
+- Every expense and budget query is limited to the signed-in user. A request for another user's expense returns a 404 response.
+- All routes under `/api/admin` require a valid token and the `admin` role. Public sign-up always creates a regular user. Administrator accounts are created by the seed script only.
+- Request bodies are validated with express-validator. Helmet sets security headers, and CORS allows only the origin listed in `CLIENT_URL`.
 
----
+## Running the project locally
 
-## 🚀 Getting started (local)
+### Requirements
+- Node.js 18 or later
+- A MongoDB connection string (MongoDB Atlas or a local MongoDB server). This is not needed if you use the in-memory option described below.
 
-### Prerequisites
-- Node.js 18 or newer (developed on Node 24)
-- A MongoDB connection string (MongoDB Atlas or a local `mongod`). This is optional if you use the in-memory option below.
-
-### 1. Clone and install
+### Installation
 ```bash
 git clone https://github.com/jacobelohe/Summative-Project-Retain-App.git
 cd Summative-Project-Retain-App
@@ -106,112 +99,127 @@ cd server && npm install
 cd ../client && npm install
 ```
 
-### 2. Configure the API
-```bash
-cd server
-cp .env.example .env   # then edit MONGODB_URI, JWT_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
-```
+### API configuration
+Copy `server/.env.example` to `server/.env` and set the values below.
 
 | Variable | Description |
 | --- | --- |
-| `PORT` | API port (default `5000`) |
-| `MONGODB_URI` | MongoDB connection string |
-| `JWT_SECRET` | Long random string used to sign tokens |
-| `JWT_EXPIRES_IN` | Token lifetime (default `7d`) |
-| `CLIENT_URL` | Allowed frontend origin(s), comma separated (default `http://localhost:5173`) |
-| `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Admin account created by the seed script |
+| `PORT` | Port the API listens on. Default 5000. |
+| `MONGODB_URI` | MongoDB connection string. |
+| `JWT_SECRET` | Long random string used to sign tokens. |
+| `JWT_EXPIRES_IN` | Token lifetime. Default `7d`. |
+| `CLIENT_URL` | Allowed frontend origin or origins, separated by commas. Default `http://localhost:5173`. |
+| `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Details of the administrator account created by the seed script. |
 
-### 3. Seed and run
+### Starting the application
+In the `server` folder:
 ```bash
-# in server/
-npm run seed:demo   # categories + admin + demo user with sample expenses (safe to re-run)
-npm run dev         # API on http://localhost:5000
-
-# in client/ (separate terminal)
-npm run dev         # app on http://localhost:5173 (Vite proxies /api to :5000)
+npm run seed:demo    # creates categories, the admin account and the demo user (safe to run more than once)
+npm run dev          # starts the API on http://localhost:5000
 ```
+In the `client` folder, in a second terminal:
+```bash
+npm run dev          # starts the frontend on http://localhost:5173
+```
+During development Vite forwards requests for `/api` to `http://localhost:5000`, so `VITE_API_URL` does not need to be set.
 
-**No MongoDB?** Run `npm run dev:memory` in `server/` instead of the seed and dev steps. It starts the API on an in-memory MongoDB that is already seeded. The data is lost when it stops.
+To run without a MongoDB server, use `npm run dev:memory` in the `server` folder instead of the two commands above. It starts the API against a temporary in-memory database that is already seeded. The data is discarded when the process stops.
 
 ### Scripts
 
-| Location | Command | What it does |
+| Folder | Command | Purpose |
 | --- | --- | --- |
-| server | `npm run dev` | Start the API with auto-reload (nodemon) |
-| server | `npm start` | Start the API (production) |
-| server | `npm run seed` / `seed:demo` | Seed categories + admin (and the demo user) |
-| server | `npm run dev:memory` | API on a throwaway, pre-seeded in-memory MongoDB |
-| client | `npm run dev` | Vite dev server |
-| client | `npm run build` | Type-check (`tsc -b`) and build for production |
-| client | `npm run lint` | Lint with oxlint |
+| server | `npm run dev` | Start the API with automatic restart on file changes |
+| server | `npm start` | Start the API |
+| server | `npm run seed` | Create the categories and the administrator account |
+| server | `npm run seed:demo` | Same as `seed`, and also create the demo user with sample expenses |
+| server | `npm run dev:memory` | Start the API on a seeded in-memory database |
+| client | `npm run dev` | Start the Vite development server |
+| client | `npm run build` | Type-check and build for production |
+| client | `npm run lint` | Run the linter |
 
----
+## API reference
 
-## 📡 API reference
+All paths are relative to `/api`. Routes marked "User" or "Admin" require the header `Authorization: Bearer <token>`. Errors are returned as JSON in the form `{ "message": string, "details"?: [{ "field": string, "message": string }] }`.
 
-Base URL: `/api`. Protected routes need an `Authorization: Bearer <token>` header. Errors always come back as JSON in the form `{ "message": string, "details"?: [{ "field", "message" }] }`.
+### Authentication
 
-### Auth
-| Method | Endpoint | Access | Description |
+| Method | Path | Access | Description |
 | --- | --- | --- | --- |
-| POST | `/auth/register` | Public | `{ name, email, password }` → `{ token, user }` (role is always `user`) |
-| POST | `/auth/login` | Public | `{ email, password }` → `{ token, user }` |
-| GET | `/auth/me` | User | Current user |
+| POST | `/auth/register` | Public | Body `{ name, email, password }`. Returns `{ token, user }`. The role is always `user`. |
+| POST | `/auth/login` | Public | Body `{ email, password }`. Returns `{ token, user }`. |
+| GET | `/auth/me` | User | Returns the current user. |
 
-### Expenses (scoped to the signed-in user)
-| Method | Endpoint | Description |
+### Expenses (limited to the signed-in user)
+
+| Method | Path | Description |
 | --- | --- | --- |
-| GET | `/expenses` | Paginated list. Query params: `search`, `category`, `paymentMethod`, `startDate`, `endDate` (`YYYY-MM-DD`), `minAmount`, `maxAmount`, `sortBy` (`date`/`amount`), `order` (`asc`/`desc`), `page`, `limit` (max 100). Returns `{ data, page, limit, total, totalPages, totalAmount }` |
-| POST | `/expenses` | Create `{ title, amount, category, date, paymentMethod, notes? }` |
-| GET | `/expenses/:id` | Get one expense |
-| PUT | `/expenses/:id` | Update any of the fields above |
-| DELETE | `/expenses/:id` | Delete |
+| GET | `/expenses` | Paginated list. Query parameters: `search`, `category`, `paymentMethod`, `startDate`, `endDate` (format `YYYY-MM-DD`), `minAmount`, `maxAmount`, `sortBy` (`date` or `amount`), `order` (`asc` or `desc`), `page`, `limit` (maximum 100). Returns `{ data, page, limit, total, totalPages, totalAmount }`. |
+| POST | `/expenses` | Body `{ title, amount, category, date, paymentMethod, notes? }`. |
+| GET | `/expenses/:id` | Returns one expense. |
+| PUT | `/expenses/:id` | Updates any of the fields above. |
+| DELETE | `/expenses/:id` | Deletes the expense. |
 
-`paymentMethod` is one of `cash`, `card`, `mobile_money`, `bank_transfer` or `other`.
+`paymentMethod` must be one of `cash`, `card`, `mobile_money`, `bank_transfer` or `other`.
 
-### Budgets (scoped to the signed-in user)
-| Method | Endpoint | Description |
+### Budgets (limited to the signed-in user)
+
+| Method | Path | Description |
 | --- | --- | --- |
-| GET | `/budgets` | All budgets the user has set (newest month first) |
-| GET | `/budgets/:month` | `YYYY-MM` → `{ month, budget, totalSpent, remaining, percentUsed, status, expenseCount }` |
-| PUT | `/budgets/:month` | `{ amount }`: create or update the month's budget |
-| DELETE | `/budgets/:month` | Remove the month's budget |
+| GET | `/budgets` | Lists the budgets the user has set, newest month first. |
+| GET | `/budgets/:month` | The month is given as `YYYY-MM`. Returns `{ month, budget, totalSpent, remaining, percentUsed, status, expenseCount }`. |
+| PUT | `/budgets/:month` | Body `{ amount }`. Creates or updates the budget for the month. |
+| DELETE | `/budgets/:month` | Removes the budget for the month. |
 
 ### Dashboard
-| Method | Endpoint | Description |
+
+| Method | Path | Description |
 | --- | --- | --- |
-| GET | `/dashboard/summary?month=YYYY-MM` | Budget overview plus `highestExpense`, `byCategory[]` and `recentExpenses[]` for the month |
+| GET | `/dashboard/summary?month=YYYY-MM` | Returns the budget overview for the month together with `highestExpense`, `byCategory` and `recentExpenses`. |
 
 ### Categories
-| Method | Endpoint | Access | Description |
+
+| Method | Path | Access | Description |
 | --- | --- | --- | --- |
-| GET | `/categories` | User | All categories with an `expenseCount` for each |
-| POST | `/categories` | Admin | `{ name, color? }` (names are unique, case-insensitive) |
-| PUT | `/categories/:id` | Admin | Rename / recolour |
-| DELETE | `/categories/:id` | Admin | Deletes the category and moves its expenses to **Uncategorized**. Returns `{ reassignedCount, reassignedTo }`. The default category cannot be deleted |
+| GET | `/categories` | User | Lists all categories, each with an `expenseCount`. |
+| POST | `/categories` | Admin | Body `{ name, color? }`. Names must be unique, ignoring letter case. |
+| PUT | `/categories/:id` | Admin | Renames or recolours a category. |
+| DELETE | `/categories/:id` | Admin | Deletes the category and moves its expenses to "Uncategorized". Returns `{ reassignedCount, reassignedTo }`. The default category cannot be deleted. |
 
-### Admin
-| Method | Endpoint | Access | Description |
+### Administration
+
+| Method | Path | Access | Description |
 | --- | --- | --- | --- |
-| GET | `/admin/insights` | Admin | `totals` (users, expenses, value, expensesThisMonth), `spendingByCategory`, `topCategories`, `bottomCategories`, `recentExpenses`, `recentUsers` |
+| GET | `/admin/insights` | Admin | Returns `totals` (users, expenses, value, expensesThisMonth), `spendingByCategory`, `topCategories`, `bottomCategories`, `recentExpenses` and `recentUsers`. |
 
-### Status codes
-`200` OK · `201` created · `400` validation error · `401` not signed in / bad token · `403` not an admin · `404` not found (or not yours) · `409` duplicate (email or category) · `500` server error
+### Response codes
 
----
+| Code | Meaning |
+| --- | --- |
+| 200, 201 | Success, or resource created |
+| 400 | Validation error |
+| 401 | Missing, invalid or expired token |
+| 403 | The user does not have the required role |
+| 404 | Resource not found, or it belongs to another user |
+| 409 | Duplicate email address or category name |
+| 500 | Server error |
 
-## ☁️ Deployment
+## Deployment
 
-1. **Database: MongoDB Atlas.** Create a free cluster and a database user. Allow network access from anywhere (`0.0.0.0/0`) so Render can connect. Copy the connection string.
-2. **API: Render.** Create a **New → Blueprint** from this repository; Render reads [render.yaml](render.yaml). Set `MONGODB_URI`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` and `CLIENT_URL` (your Vercel URL). `JWT_SECRET` is generated automatically. Every start runs the idempotent seed, then starts the API.
-3. **Frontend: Vercel.** Import the repository, set the **Root Directory** to `client`, and add the environment variable `VITE_API_URL=https://<your-render-service>.onrender.com/api`. [client/vercel.json](client/vercel.json) rewrites all paths to `index.html` so deep links work.
-4. Put the two URLs in the **Live demo** table at the top of this README.
+1. Database: create a MongoDB Atlas cluster and a database user. In Network Access, add the entry `0.0.0.0/0` so the hosted API can connect. Copy the connection string.
+2. API: create a Render Blueprint from this repository. Render reads `render.yaml`. Set `MONGODB_URI`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` and `CLIENT_URL` (the frontend address). `JWT_SECRET` is generated by Render. On every start the service runs the seed script and then starts the server.
+3. Frontend: import the repository into Vercel, set the root directory to `client`, and add the environment variable `VITE_API_URL` with the value `https://<api-address>/api`. The file `client/vercel.json` rewrites all paths to `index.html` so that direct links to pages work.
+4. After the frontend is deployed, set `CLIENT_URL` on Render to the frontend address, without a trailing slash.
 
----
+## Error handling
 
-## 🧭 Error handling & UX notes
-- Forms validate on the client first, then show any field errors the server returns.
-- Every data view has a loading state, an empty state and an error state with a **Retry** button. Toast notifications confirm saves and deletes.
-- Destructive actions (deleting an expense, budget or category) ask for confirmation first.
-- An expired or invalid token signs the user out automatically. A React error boundary keeps a single broken screen from blanking the whole app.
-- Search input is debounced, in-flight requests are cancelled when filters change, and route-level code splitting keeps the first page load small.
+- Forms are validated in the browser first. Validation messages returned by the API for individual fields are shown next to the matching input.
+- Each screen that loads data has a loading state, an empty state and an error state with a retry button. Confirmations of saves and deletes appear as short messages.
+- Deleting an expense, a budget or a category asks for confirmation first.
+- If the API rejects the stored token, the user is signed out automatically.
+- A React error boundary prevents a rendering error on one screen from blanking the whole application.
+
+## Additional documents
+
+- [HOW_IT_WORKS.md](HOW_IT_WORKS.md) describes how the application works and how it was built.
+- [DEMO_SCRIPT.md](DEMO_SCRIPT.md) is the script used for the recorded demonstration.
