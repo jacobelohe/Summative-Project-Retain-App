@@ -97,7 +97,15 @@ export interface ExpensePage extends Paginated<Expense> {
   totalAmount: number
 }
 
-export type BudgetStatus = 'unset' | 'within' | 'approaching' | 'over'
+export interface Budget {
+  id: string
+  /** `YYYY-MM` */
+  month: string
+  amount: number
+  updatedAt: string
+}
+
+export type BudgetStatus ='unset' | 'within' | 'approaching' | 'over'
 
 export interface BudgetOverview {
   /** `YYYY-MM` */
