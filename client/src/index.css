@@ -1,0 +1,15 @@
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tabular numbers keep money columns aligned. */
+.num {
+  font-variant-numeric: tabular-nums;
+}
