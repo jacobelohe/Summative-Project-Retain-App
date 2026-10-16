@@ -7,7 +7,7 @@ services:
     rootDir: server
     plan: free
     buildCommand: npm ci --omit=dev
-    startCommand: npm run seed && npm start
+    startCommand: npm run seed:demo && npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
