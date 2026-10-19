@@ -218,8 +218,3 @@ All paths are relative to `/api`. Routes marked "User" or "Admin" require the he
 - Deleting an expense, a budget or a category asks for confirmation first.
 - If the API rejects the stored token, the user is signed out automatically.
 - A React error boundary prevents a rendering error on one screen from blanking the whole application.
-
-## Additional documents
-
-- [HOW_IT_WORKS.md](HOW_IT_WORKS.md) describes how the application works and how it was built.
-- [DEMO_SCRIPT.md](DEMO_SCRIPT.md) is the script used for the recorded demonstration.
